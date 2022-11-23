@@ -1,0 +1,66 @@
+﻿@page "/ADOMultipleBranches"
+@using global::Shared.Models
+@inject HttpClient Client
+
+<style>
+    .pStyle {
+        font-family: serif;
+        color: #0a58ca;
+        margin: 10px;
+    }
+    div {
+    margin: 8px;
+    }
+</style>
+<PageTitle>ADO Branches</PageTitle>
+
+<p class="pStyle">Here is a list of all your Branches on ADO</p>
+
+@if (devOpsBranches == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <p>
+            <RadzenDataGrid AllowFiltering="true"
+                            AllowColumnResize="true"
+                            AllowColumnPicking="true"
+                            AllowGrouping="true"
+                            FilterMode="FilterMode.Advanced"
+                            AllowSorting="true"
+                            PageSize="10"
+                            AllowPaging="true"
+                            PagerHorizontalAlign="HorizontalAlign.Left"
+                            ShowPagingSummary="true"
+                            Data="@devOpsBranches"
+                            TItem="DuplicateBranchModel"
+                            ColumnWidth="160px">
+
+                <Columns>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="ProjectName" Filterable="false" Title="Project Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="RepoName" Filterable="false" Title="Repo Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="BranchName" Filterable="false" Title="Branch Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="CommitName" Filterable="false" Title="Commit Url" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="ComitterEmail" Filterable="false" Title="Ahead Count" Width="20px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="DuplicateBranchModel" Property="Commiter" Filterable="false" Title="Behind Count" Width="60px" TextAlign="TextAlign.Center"/>
+                </Columns>
+            </RadzenDataGrid>
+        </p>
+    </div>
+}
+
+@code {
+
+    private List<DuplicateBranchModel>? devOpsBranches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var projects = await Client.GetFromJsonAsync<List<DuplicateBranchModel>?>("ProjectMultipleBranch");
+        if (projects != null) devOpsBranches = projects;
+    }
+
+}

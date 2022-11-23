@@ -1,0 +1,70 @@
+﻿@page "/ADOProjects"
+@using global::Shared.Models
+@inject HttpClient Client
+
+<style>
+    .h1Style {
+        font-family: serif;
+        color: red !important;
+    }
+    .pStyle {
+        font-family: serif;
+        color: #0a58ca;
+    }
+    div {
+    margin: 8px;
+    }
+</style>
+
+
+<PageTitle>ADO Projects</PageTitle>
+<p class="pStyle">Here is a list of all your projects on ADO</p>
+
+@if (devOpsProjects == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <RadzenDataGrid AllowFiltering="true"
+                        AllowColumnPicking="true"
+                        AllowColumnResize="true"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowGrouping="true"
+                        PageSize="10"
+                        AllowPaging="true"
+                        PagerHorizontalAlign="HorizontalAlign.Left"
+                        ShowPagingSummary="true"
+                        Data="@devOpsProjects"
+                        TItem="ProjectModel"
+                        ColumnWidth="160px">
+
+
+            <Columns>
+                <RadzenDataGridColumn TItem="ProjectModel" Property="Name" Filterable="false" Title="Name" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="ProjectModel" Property="Url" Filterable="false" Title="Url" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="ProjectModel" Property="LastUpdateTime" Filterable="false" Title="Last Update Time" Width="20px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="ProjectModel" Property="Description" Filterable="false" Title="Project Description" Width="60px" TextAlign="TextAlign.Center"/>
+            </Columns>
+
+        </RadzenDataGrid>
+    </div>
+}
+
+@code {
+
+
+    private List<ProjectModel?>? devOpsProjects;
+
+    protected override async Task OnInitializedAsync()
+    {
+    // Client.GetFromJsonAsync<Task>("PersistBranches");
+        var projects = await Client.GetFromJsonAsync<List<ProjectModel?>?>("Project");
+        if (projects != null) devOpsProjects = projects;
+    }
+
+}

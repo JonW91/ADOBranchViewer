@@ -1,0 +1,28 @@
+﻿div2 {
+    margin: 8px;
+    align-content: center;
+    width: 200px;
+}
+
+.mudTextNumber {
+    font-size: medium;
+    font-style: oblique;
+    padding-bottom: 4px;
+    color: white;
+}
+
+.mudText {
+    font-size: medium;
+    font-style: oblique;
+    padding-bottom: 4px;
+    color: white;
+}
+
+.mudCardRed {
+    background: #b32121;
+    width: 200px;
+}
+
+.mudCardContent {
+    align-content: center;
+}

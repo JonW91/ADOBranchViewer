@@ -1,0 +1,91 @@
+﻿@page "/ADOStaleBranches"
+@using global::Shared.Models
+@inject HttpClient Client
+
+<style>
+    .pStyle {
+        font-family: serif;
+        color: #0a58ca;
+        margin: 10px;
+    }
+    div {
+    margin: 8px;
+    }
+</style>
+<PageTitle>ADO Stale Branches</PageTitle>
+
+<p class="pStyle">Here is a list of all your Stale Branches on ADO</p>
+
+@if (devOpsBranches == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <p>
+            <RadzenDataGrid AllowFiltering="true"
+                            AllowColumnResize="true"
+                            AllowColumnPicking="true"
+                            AllowGrouping="true"
+                            FilterMode="FilterMode.Advanced"
+                            AllowSorting="true"
+                            PageSize="10"
+                            AllowPaging="true"
+                            PagerHorizontalAlign="HorizontalAlign.Left"
+                            ShowPagingSummary="true"
+                            Data="@devOpsBranches"
+                            TItem="BranchModel"
+                            ColumnWidth="160px">
+
+                <Columns>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="ProjectName" Filterable="false" Title="Project Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="RepoName" Filterable="false" Title="Repo Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="BranchName" Filterable="false" Title="Branch Name" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="AheadCount" Filterable="false" Title="Ahead Count" Width="20px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="BehindCount" Filterable="false" Title="Behind Count" Width="60px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="CommitDate" Filterable="false" Title="Commit Date" Width="20px" TextAlign="TextAlign.Center"/>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="IsStale" Filterable="false" Title="Is Stale?" Width="20px" TextAlign="TextAlign.Center">
+                        <Template Context="data">
+                            @if (data.IsStale)
+                            {
+                                <span style='color: red'>@data.IsStale</span>
+                            }
+                            else
+                            {
+                                <span style='color: green'>@data.IsStale</span>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="BranchModel" Property="DayDifference" Filterable="false" Title="DayDifference" Width="60px" TextAlign="TextAlign.Center">
+                        <Template Context="data">
+                            @if (data.IsStale)
+                            {
+                                <span style='color: red'>@data.DayDifference</span>
+                            }
+                            else
+                            {
+                                <span style='color: green'>@data.DayDifference</span>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+
+            </RadzenDataGrid>
+        </p>
+    </div>
+}
+
+@code {
+
+    private List<BranchModel>? devOpsBranches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var projects = await Client.GetFromJsonAsync<List<BranchModel>?>("Branch");
+        if (projects != null) devOpsBranches = projects.Where(o => o.IsStale).ToList();
+    }
+
+}

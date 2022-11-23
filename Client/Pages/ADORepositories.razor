@@ -1,0 +1,68 @@
+﻿@page "/ADORepositories"
+@using global::Shared.Models
+@inject HttpClient Client;
+<h3>ADORepositories</h3>
+
+<style>
+    .pStyle {
+        font-family: serif;
+        color: #0a58ca;
+    }
+    div {
+    margin: 8px;
+    }
+</style>
+
+
+<PageTitle>ADO Repositories</PageTitle>
+
+<p class="pStyle">Here is a list of all your Repositories on ADO</p>
+
+@if (devOpsRepos == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <RadzenDataGrid AllowFiltering="true"
+                        AllowColumnResize="true"
+                        AllowColumnPicking="true"
+                        AllowGrouping="true"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        PageSize="10"
+                        AllowPaging="true"
+                        PagerHorizontalAlign="HorizontalAlign.Left"
+                        ShowPagingSummary="true"
+                        Data="@devOpsRepos"
+                        TItem="RepoModel"
+                        ColumnWidth="160px">
+
+            <Columns>
+                <RadzenDataGridColumn TItem="RepoModel" Property="Id" Filterable="false" Title="ID" Width="20px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="Name" Filterable="false" Title="Name" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="Url" Filterable="false" Title="Url" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="ProjectId" Filterable="false" Title="Project Id" Width="20px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="ProjectName" Filterable="false" Title="Project Name" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="ProjectDescription" Filterable="false" Title="Project Description" Width="20px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="DefaultBranch" Filterable="false" Title="Default Branch" Width="60px" TextAlign="TextAlign.Center"/>
+                <RadzenDataGridColumn TItem="RepoModel" Property="Size" Filterable="false" Title="Size" Width="60px" TextAlign="TextAlign.Center"/>
+            </Columns>
+
+        </RadzenDataGrid>
+    </div>
+}
+
+@code {
+    private List<RepoModel>? devOpsRepos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var projects = await Client.GetFromJsonAsync<List<RepoModel>?>("Repo");
+        if (projects != null) devOpsRepos = projects;
+    }
+
+}

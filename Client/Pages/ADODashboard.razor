@@ -1,0 +1,152 @@
+﻿@page "/"
+@using global::Shared.Models
+@using Variant = MudBlazor.Variant
+@inject NavigationManager NavManager
+@inject HttpClient Client
+
+
+<style>
+ div {
+     margin: 0 auto;
+}
+ div2 {
+     margin: 8px;
+     width: 300px;
+}
+ .mudText {
+     font-style: normal;
+     font-size: medium;
+     padding-bottom: 10px;
+     color: white;
+}
+ .mudTextNumber {
+     font-size: 40px;
+     font-style: oblique;
+     padding-bottom: 1px;
+     color: white;
+}
+ .mudCardRed {
+     background: red;
+     width: 300px;
+     text-align: center;
+}
+ .mudCardBlue {
+     background: blue;
+     width: 300px;
+     text-align: center;
+}
+ .mudCardGreen {
+     background: green;
+     width: 300px;
+     text-align: center;
+}
+ .mudCardOrange {
+     background: orange;
+     width: 300px;
+     text-align: center;
+}
+ .mudCardPink {
+     background: pink;
+     width: 300px;
+     text-align: center;
+}
+ .mudButton {
+     width: 280px;
+ }
+
+
+</style>
+
+<PageTitle>ADO Dashboard</PageTitle>
+@if (dashboard == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <div2>
+            <MudCard Outlined="true" Class="mudCardRed">
+                <MudCardContent>
+                    <MudText Class="mudText">Project Count</MudText>
+                    <MudText Class="mudTextNumber">@dashboard.ProjectCount</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Class="mudButton" Variant="Variant.Outlined" Color="Color.Dark" @onclick="@(_ => GoTo(Project))">All Projects</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div2>
+
+        <div2>
+            <MudCard Outlined="true" Class="mudCardBlue">
+                <MudCardContent Class="mudCardContent">
+                    <MudText Class="mudText">Repository Count</MudText>
+                    <MudText Class="mudTextNumber">@dashboard.RepositoryCount</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Class="mudButton" Variant="Variant.Outlined" Color="Color.Dark" @onclick="@(_ => GoTo(Repositories))">All Repos</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div2>
+
+        <div2>
+            <MudCard Outlined="true" Class="mudCardGreen">
+                <MudCardContent Class="mudCardContent">
+                    <MudText Class="mudText">Branch Count</MudText>
+                    <MudText Class="mudTextNumber">@dashboard.BranchCount</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Class="mudButton" Variant="Variant.Outlined" Color="Color.Dark" @onclick="@(_ => GoTo(Branches))">All Branches</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div2>
+
+        <div2>
+            <MudCard Outlined="true" Class="mudCardOrange">
+                <MudCardContent Class="mudCardContent">
+                    <MudText Class="mudText">Repos Multiple Branches Count</MudText>
+                    <MudText Class="mudTextNumber">@dashboard.ProjectsWithMultipleBranchesCount</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Class="mudButton" Variant="Variant.Outlined" Color="Color.Dark" @onclick="@(_ => GoTo(MultipleBranches))">Repos Multiple Branches</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div2>
+
+        <div2>
+            <MudCard Outlined="true" Class="mudCardPink">
+                <MudCardContent Class="mudCardContent">
+                    <MudText Class="mudText">Stale Branches Count</MudText>
+                    <MudText Class="mudTextNumber">@dashboard.StaleBranchesCount</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Class="mudButton" Variant="Variant.Outlined" Color="Color.Dark" @onclick="@(_ => GoTo(StaleBranches))">Stale Branches</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </div2>
+    </div>
+}
+
+@code {
+
+    private const string Project = "ADOProjects";
+    private const string Repositories = "ADORepositories";
+    private const string Branches = "ADOBranches";
+    private const string MultipleBranches = "ADOMultipleBranches";
+    private const string StaleBranches = "ADOStaleBranches";
+    private DashboardModel? dashboard;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var dashboardData = await Client.GetFromJsonAsync<DashboardModel?>("Dashboard");
+        if (dashboardData != null) dashboard = dashboardData;
+    }
+
+    private void GoTo(string pageRoute)
+    {
+        NavManager.NavigateTo($"/{pageRoute}");
+    }
+
+}
